@@ -3,6 +3,7 @@
 
 import os
 import sys
+import subprocess
 
 """
 Return the path of the executable if available, None otherwise
@@ -22,11 +23,12 @@ def which(executable, cwd="."):
 				executable = os.path.basename(executable)
 			for root in pathList:
 				for ext in [".exe", ".cmd", ""]:
-					executablePath = os.path.join(root, executable + ext).replace("/" if os.sep == "\\" else "\\", os.sep)
+					executablePath = os.path.join(root, "%s%s" % (executable, ext)).replace("/" if os.sep == "\\" else "\\", os.sep)
 					if os.path.isfile(executablePath):
 						return executablePath
 		else:
-			return shell(["which", executable], capture=True)[0]
+			output = subprocess.check_output(["which", executable]).strip()
+			return output if len(output) else None
 	except:
 		pass
 	return None
